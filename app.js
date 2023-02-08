@@ -5,13 +5,15 @@ const inquirer = require('inquirer')
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'Traya#1213'
+    password: 'Traya#1213',
+    database: 'employees_db'
   });
   
 db.connect((err) => {
      if(err) {
         throw err
      }
+     console.log('MySQL connected')
 })
 
 const appp = express()
