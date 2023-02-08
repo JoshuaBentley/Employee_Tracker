@@ -8,9 +8,10 @@ CREATE TABLE employees(
     id INT NOT NULL,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    employees_id INT,
+    employees_id INT NOT NULL,
     Poistion VARCHAR(50),
     deparment VARCHAR(100)
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE managers(
