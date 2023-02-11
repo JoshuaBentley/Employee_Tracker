@@ -1,45 +1,63 @@
-const { default: Choices } = require("inquirer/lib/objects/choices")
+const inquirer = require('inquirer')
+const mysql = require('mysql2')
+const sql = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Traya#1213',
+    database: 'employees_db'
+  });
 
-const inquirer = requier('inquirer')
+  sql.connect(function (err) {
+    if (err) throw err;
+})
 
-inquirer.prompt([
-    {
-        type: 'list',
-        name: 'employeeType',
-        message: 'What type of employee is this?',
-        choices: ['All Employees', 'Managers', 'Update Employee Records', 'Remove an Employee']
 
-    }
-])
-    .then((response) => {
-        switch(response.employeeType) {
-            case 'All Employees':
-                showEmployees()
-                break
-            case 'Managers':
-                showManagers()
-                break
-            case 'Update Employee Records':
-                updateEmployees()
-                break
-            case 'Remove an Employee':
-                removeEmployee()
-                break
+    function employeeDatabase() {
+        inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employeeType',
+            message: 'What type of employee is this?',
+            choices: ['All Employees', 'Managers', 'Update Employee Records', 'Remove an Employee']
+
         }
+    ])
+        .then((response) => {
+            switch(response.employeeType) {
+                case 'All Employees':
+                    showEmployees()
+                    break
+                 case 'Managers':
+                    showManagers()
+                    break
+                case 'Update Employee Records':
+                    updateEmployees()
+                    break
+                case 'Remove an Employee':
+                    removeEmployee()
+                    break
+            }
+        })
+    }    
+
+    function  showEmployees() {
+        let result =  'SELECT * FROM employees'
+        sql.query(result, (err, respose) => {
+            if (err) throw err;
+            console.log(respose)
     })
+}
 
-    showEmployees() {
-
-    }
-
-    showManagers(){
+    function showManagers(){
 
     }
 
-    updateEmployees(){
+    function updateEmployees(){
 
     }
 
-    removeEmployee() {
-        
+    function  removeEmployee() {
+
     }
+
+employeeDatabase()
