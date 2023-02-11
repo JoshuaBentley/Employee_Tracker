@@ -36,3 +36,17 @@ VALUES
 (034, "Eren", "Yeger", '044', "Guard", "Security"),
 (035, "Roronoa", "Zoro", '002', "Guard", "Security");
 
+INSERT INTO managers (id, first_name, last_name, employee_id, Position, department)
+VALUES
+(001, "Traya", "Bentley", "001", "President", "Company"),
+(002, "Izuku", "Midoriya", '005', "Managment", "Sales"),
+(003, "Oliver", "Queen", '066', "Assistant Manager", "Sales"),
+(004, "Dwight", "Schrute", '048', "Manager", "HR"),
+(005, "David", "Smith", '032', "Manager", "IT"),
+(006, "Naruto", "Uzumaki", '009', "Manager", "Managment"),
+(007, "Bruce", "Wayne", '025', "Manager", "Finance"),
+(008, "Will", "Wonka", '065', "Manager", "Marketing"),
+(009, "Charles", "Xavier", '051', "Manager", "Security"),
+(010, "Oliver", "Queen", '066', "Assistant Manager", "Sales");
+
+

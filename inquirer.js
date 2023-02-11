@@ -1,5 +1,7 @@
 const inquirer = require('inquirer')
+const cTable = require('console.table')
 const mysql = require('mysql2')
+
 const sql = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -10,7 +12,6 @@ const sql = mysql.createConnection({
   sql.connect(function (err) {
     if (err) throw err;
 })
-
 
     function employeeDatabase() {
         inquirer.prompt([
@@ -44,12 +45,17 @@ const sql = mysql.createConnection({
         let result =  'SELECT * FROM employees'
         sql.query(result, (err, respose) => {
             if (err) throw err;
-            console.log(respose)
+            console.table(respose)
     })
+    employeeDatabase()
 }
 
     function showManagers(){
-
+        let result =  'SELECT * FROM managers'
+        sql.query(result, (err, respose) => {
+            if (err) throw err;
+            console.table(respose)
+    })
     }
 
     function updateEmployees(){
