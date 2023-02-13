@@ -10,7 +10,9 @@ CREATE TABLE employees(
     last_name VARCHAR(50) NOT NULL,
     employee_id INT,
     Position VARCHAR(50) NOT NULL,
-    department VARCHAR(100) NOT NULL
+    department VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+
 );
 
 CREATE TABLE managers(
@@ -19,8 +21,8 @@ CREATE TABLE managers(
     last_name VARCHAR(50) NOT NULL,
     employee_id INT NOT NULL,
     Position VARCHAR(50) NOT NULL,
-    department VARCHAR(100) NOT NULL
+    department VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
    
-    
 );
 

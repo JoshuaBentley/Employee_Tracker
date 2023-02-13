@@ -202,6 +202,102 @@ const sql = mysql.createConnection({
     }
 
     function addEmployee() {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "getFirst",
+                message: "What is this persons First name?",
+                validate: (answer) => {
+                    if (answer !== ""){
+                        return true
+                    }
+                    return "you didnt enter anything!"
+                    }
+            },
+            {
+                type: "input",
+                name: "getLast",
+                message: "What is this persons Last name?",
+                validate: (answer) => {
+                    if (answer !== ""){
+                        return true
+                    }
+                    return "you didnt enter anything!"
+                    }
+            },
+            {
+                type: "input",
+                name: "getEmployeeID",
+                message: "What is the three digit Employee ID?",
+                validate: (answer) => {
+                    if (answer !== ""){
+                        return true
+                    }
+                    return "you didnt enter anything!"
+                    }
+            },
+            {
+                type: 'input',
+                name: 'setPosition',
+                message: 'What Position will they be in?',
+                validate: (answer) => {
+                    if (answer !== ""){
+                        return true
+                    }
+                    return "you didnt enter anything!"
+                    }
+            },
+            {
+                type: 'input',
+                name: 'setDepartment',
+                message: 'What Department will they be in?',
+                validate: (answer) => {
+                    if (answer !== ""){
+                        return true
+                    }
+                    return "you didnt enter anything!"
+                    }
+            }
+        ])
+        .then ((response) => {
+             let beforeAdd = `
+             SELECT *
+             FROM employees
+             `
+
+             let add = `
+             INSERT INTO employees (first_name, last_name, employee_id, Position, department)
+             VALUES
+             ('${response.getFirst}', '${response.getLast}', ${response.getEmployeeID}, '${response.setPosition}','${response.setPosition}')
+             `
+
+             let afterAdd = `
+             SELECT *
+             FROM employees
+             `
+
+            sql.query(beforeAdd, (err, res) => {
+                if(err) {
+                    throw err;
+                } else {
+                    console.table(res)
+                    sql.query(add, (err) => {
+                        if(err) {
+                            throw err;
+                        } else {
+                            sql.query(afterAdd, (err, res) => {
+                                if(err) {
+                                    throw err;
+                                } else {
+                                    console.table(res)
+                                    employeeDatabase()
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        })
 
     }
     
