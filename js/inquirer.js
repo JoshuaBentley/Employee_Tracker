@@ -1,6 +1,9 @@
+
 const inquirer = require('inquirer')
 const cTable = require('console.table')
-const mysql = require('mysql2')
+const mysql = require('mysql2');
+const { response } = require('express');
+
 
 const sql = mysql.createConnection({
     host: 'localhost',
@@ -19,7 +22,7 @@ const sql = mysql.createConnection({
             type: 'list',
             name: 'employeeType',
             message: 'What type of employee is this?',
-            choices: ['All Employees', 'Managers', 'Change Employess Position', 'Change Employee Department', 'Remove an Employee']
+            choices: ['All Employees', 'Managers', 'Change Employess Position', 'Change Employee Department', 'Add Employee', 'Remove an Employee', 'Exit']
 
         }
     ])
@@ -37,8 +40,14 @@ const sql = mysql.createConnection({
                 case 'Change Employee Department':
                     newDepartment()
                     break
+                case 'Add Employee':
+                    addEmployee()
+                    break
                 case 'Remove an Employee':
                     removeEmployee()
+                    break
+                case 'Exit': 
+                    exit()
                     break
             }
         })
@@ -63,8 +72,7 @@ const sql = mysql.createConnection({
     })
     }
 
-    function updateEmployees() {
-        
+    function updateEmployees() {   
         inquirer.prompt([
             {
             type: "input",
@@ -90,33 +98,165 @@ const sql = mysql.createConnection({
             }
         ])
         .then((response) => {
+            let beforeChange = `
+            SELECT *
+            FROM  employees
+            WHERE employee_id = ${response.getid};
+            `
+
             let result = `   
             UPDATE employees 
             SET position = '${response.getPosition}' 
             WHERE employee_id = ${response.getid}
             `
-            let showResults = `SELECT * FROM employees WHERE employee_id = ${response.getid};`
             
-            sql.query(result, (err, res) => {
-                if(err) {
+            let showResults = `
+            SELECT * 
+            FROM employees 
+            WHERE employee_id = ${response.getid};`
+            
+            sql.query(beforeChange, (err, res) => {
+                if (err) {
                     throw err;
                 } else {
-                   sql.query(showResults, (err, res) => {
-                    if(err) throw err;
                     console.table(res)
-                    employeeDatabase()
-                   })
-                }    
-            })
+                    sql.query(result, (err, res) => {
+                    if(err) {
+                        throw err;
+                    } else {
+                         sql.query(showResults, (err, res) => {
+                            if(err) throw err;
+                            console.table(res)
+                            employeeDatabase()
+                            }
+                        )}
+                    })
+                }}
+            )
+        })
+    }                     
+                         
+
+    function newDepartment() {
+        inquirer.prompt([
+            {
+            type: "input",
+            name: "employeeID",
+            message: "What is the three digit Employee ID for this person?",
+            validate: (answer) => {
+                if (answer !== ""){
+                    return true
+                }
+                return "You need to enter an ID!"
+                }
+            },
+            {
+            type: "input",
+            name: "newDepartment",
+            message: "What department are they moving to?",
+            validate: (answer) => {
+                if (answer !== ""){
+                    return true
+                }
+                return "You need to enter a Department!"
+                }
+            }
+        ])
+        .then((response) => {
+            let beforeChange = `
+            SELECT *
+            FROM  employees
+            WHERE employee_id = ${response.employeeID};
+            `
+
+            let result = `   
+            UPDATE employees 
+            SET department = '${response.newDepartment}' 
+            WHERE employee_id = ${response.employeeID}
+            `
+            
+            let showResults = `
+            SELECT * 
+            FROM employees 
+            WHERE employee_id = ${response.employeeID};`
+            
+            sql.query(beforeChange, (err, res) => {
+                if (err) {
+                    throw err;
+                } else { 
+                    console.table(res)
+                    sql.query(result, (err, res) => {
+                    if(err) {
+                        throw err;
+                    } else {
+                         sql.query(showResults, (err, res) => {
+                            if(err) throw err;
+                            console.table(res)
+                            employeeDatabase()
+                            }
+                        )}
+                    })
+                }}
+            )
         })
     }
 
-    function newDepartment() {
+    function addEmployee() {
+
+    }
     
-    }
-
     function  removeEmployee() {
+       inquirer.prompt([
+        {
+            type: "input",
+            name: "getID",
+            message: "What is the three digit Employee ID for this person?",
+            validate: (answer) => {
+                if (answer !== ""){
+                    return true
+                }
+                return "You need to enter an ID!"
+                }
+        }
+       ])
+       .then((response) => {
+            let beforeRemove = `
+            SELECT *
+            FROM employees;
+            `
 
-    }
+            let remove = `
+            DELETE FROM employees
+            WHERE employee_id = ${response.getID};
+            `
+            let afterRemove = `
+            SELECT *
+            FROM employees;
+            `
+
+            sql.query(beforeRemove, (err, res) => {
+                if(err) {
+                    throw err;
+                } else {
+                    console.table(res)
+                    sql.query(remove, (err) => {
+                        if(err) {
+                            throw err;
+                        } else{
+                            console.log('Employee has been removed from the Database')
+                            sql.query(afterRemove, (err, res) => {
+                                if (err) {
+                                    throw err;
+                                } else {
+                                    console.table(res)
+                                    employeeDatabase()
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+       })
+ }
 
 employeeDatabase()
