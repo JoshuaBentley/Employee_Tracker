@@ -21,17 +21,17 @@ const sql = mysql.createConnection({
         {
             type: 'list',
             name: 'employeeType',
-            message: 'What type of employee is this?',
-            choices: ['All Employees', 'Managers', 'Change Employess Position', 'Change Employee Department', 'Add Employee', 'Remove an Employee', 'Exit']
+            message: 'What would you like to do today?',
+            choices: ['See all Employees', 'See all Managers', 'Change Employess Position', 'Change Employee Department', 'Add Employee', 'Remove an Employee', 'Exit']
 
         }
     ])
         .then((response) => {
             switch(response.employeeType) {
-                case 'All Employees':
+                case 'See all Employees':
                     showEmployees()
                     break
-                 case 'Managers':
+                 case 'See all Managers':
                     showManagers()
                     break
                 case 'Change Employess Position':
@@ -52,6 +52,7 @@ const sql = mysql.createConnection({
         })
     }    
 
+    // shows employee table
     function  showEmployees() {
         let result =  'SELECT * FROM employees'
         sql.query(result, (err, respose) => {
@@ -62,6 +63,7 @@ const sql = mysql.createConnection({
     
 }
 
+    // shows manager table 
     function showManagers(){
         let result =  'SELECT * FROM managers'
         sql.query(result, (err, respose) => {
@@ -71,6 +73,7 @@ const sql = mysql.createConnection({
     })
     }
 
+    
     function updateEmployees() {   
         inquirer.prompt([
             {
@@ -106,7 +109,7 @@ const sql = mysql.createConnection({
             let result = `   
             UPDATE employees 
             SET position = '${response.getPosition}' 
-            WHERE employee_id = ${response.getid}
+            WHERE employee_id = ${response.getid};
             `
             
             let showResults = `
@@ -118,15 +121,21 @@ const sql = mysql.createConnection({
                 if (err) {
                     throw err;
                 } else {
+                    console.log('BEFORE')
                     console.table(res)
-                    sql.query(result, (err, res) => {
+                    sql.query(result, (err) => {
                     if(err) {
                         throw err;
                     } else {
-                         sql.query(showResults, (err, res) => {
-                            if(err) throw err;
-                            console.table(res)
-                            employeeDatabase()
+                         sql.query(showResults, (err) => {
+                            if(err){
+                                throw err;
+                            } else {
+                                console.log('AFTER')
+                                console.table(res)
+                                employeeDatabase()
+                            }
+                           
                             }
                         )}
                     })
@@ -135,7 +144,7 @@ const sql = mysql.createConnection({
         })
     }                     
                          
-
+    //changes departments
     function newDepartment() {
         inquirer.prompt([
             {
@@ -183,13 +192,15 @@ const sql = mysql.createConnection({
                 if (err) {
                     throw err;
                 } else { 
-                    console.table(res)
-                    sql.query(result, (err, res) => {
+                    console.log('BEFORE')
+                   console.table(res)
+                    sql.query(result, (err) => {
                     if(err) {
                         throw err;
                     } else {
                          sql.query(showResults, (err, res) => {
                             if(err) throw err;
+                            console.log('AFTER')
                             console.table(res)
                             employeeDatabase()
                             }
@@ -202,6 +213,18 @@ const sql = mysql.createConnection({
 
     function addEmployee() {
         inquirer.prompt([
+            {
+                type: "input",
+                name: "getNewID",
+                message: "please create an Id!",
+                validate: (answer) => {
+                    if (answer <= 35) {
+                        return "valuev must greater then 35"
+                    } else {
+                        return true
+                    }
+                }
+            },
             {
                 type: "input",
                 name: "getFirst",
@@ -265,9 +288,9 @@ const sql = mysql.createConnection({
              `
 
              let add = `
-             INSERT INTO employees (first_name, last_name, employee_id, Position, department)
+             INSERT INTO employees (id, first_name, last_name, employee_id, Position, department)
              VALUES
-             ('${response.getFirst}', '${response.getLast}', ${response.getEmployeeID}, '${response.setPosition}','${response.setPosition}')
+             (${response.getNewID}, '${response.getFirst}', '${response.getLast}', ${response.getEmployeeID}, '${response.setPosition}','${response.setPosition}')
              `
 
              let afterAdd = `
@@ -324,6 +347,7 @@ const sql = mysql.createConnection({
             DELETE FROM employees
             WHERE employee_id = ${response.getID};
             `
+
             let afterRemove = `
             SELECT *
             FROM employees;
@@ -353,9 +377,5 @@ const sql = mysql.createConnection({
             })
        })
  }
-
-// function exit() {
-//     return 
-// }
 
 employeeDatabase()
