@@ -47,8 +47,7 @@ const sql = mysql.createConnection({
                     removeEmployee()
                     break
                 case 'Exit': 
-                    exit()
-                    break
+                   sql.end()
             }
         })
     }    
@@ -354,5 +353,9 @@ const sql = mysql.createConnection({
             })
        })
  }
+
+// function exit() {
+//     return 
+// }
 
 employeeDatabase()
